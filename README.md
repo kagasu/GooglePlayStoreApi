@@ -20,3 +20,30 @@ foreach (var appDetail in searchResult.PreFetch[0].Response.Payload.ListResponse
   Console.WriteLine($"{appId},{appName}");
 }
 ```
+
+### AppDetail
+```cs
+var email = "abc@gmail.com";
+var password = "mypassword";
+var androidId = Guid.NewGuid().ToString("N").Substring(0, 16);
+
+var client = new GooglePlayStoreClient(email, password, androidId);
+var token = await client.GetGoogleToken();
+var auth = await client.GetGoogleAuth(token);
+
+var appDetail = await client.AppDetail("com.google.android.gm");
+var appName = appDetail.DocV2.Title;
+var descriptionHtml = appDetail.DocV2.DescriptionHtml;
+var versionCode = appDetail.DocV2.Details.AppDetails.VersionCode;
+var versionString = appDetail.DocV2.Details.AppDetails.VersionString;
+var permissions = appDetail.DocV2.Details.AppDetails.Permission;
+var offerType = appDetail.DocV2.Offer[0].OfferType;
+```
+
+### Download APK
+```cs
+var gmailAppId = "com.google.android.gm";
+var appDelivery = await client.AppDelivery(gmailAppId, offerType, versionCode);
+var apkDownloadUrl = appDelivery.AppDeliveryData.DownloadUrl;
+File.WriteAllBytes("Gmail.apk", await new HttpClient().GetByteArrayAsync(apkDownloadUrl));
+```
