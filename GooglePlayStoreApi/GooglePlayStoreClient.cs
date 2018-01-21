@@ -115,7 +115,33 @@ namespace GooglePlayStoreApi
             Auth = parameters["Auth"];
             return Auth;
         }
-        
+
+        public async Task<SearchSuggestResponse> SearchSuggest(string str, bool suggestString = true, bool suggestApp = true)
+        {
+            HeaderSet("X-DFE-Device-Id", AndroidId);
+            HeaderSet("Accept-Language", "ja-JP");
+            HeaderSet("Authorization", $"GoogleLogin auth={Auth}");
+
+            var parameters = new List<KeyValuePair<string, string>>();
+
+            parameters.Add(new KeyValuePair<string, string>("q", Uri.EscapeUriString(str)));
+            parameters.Add(new KeyValuePair<string, string>("c", "3"));
+            parameters.Add(new KeyValuePair<string, string>("ssis", "120"));
+
+            if (suggestString)
+            {
+                parameters.Add(new KeyValuePair<string, string>("sst", "2"));
+            }
+            if (suggestApp)
+            {
+                parameters.Add(new KeyValuePair<string, string>("sst", "3"));
+            }
+
+            var response = await Get($"{API_ENDPOINT}/fdfe/searchSuggest?{string.Join("&", parameters.Select(x => $"{x.Key}={x.Value}"))}");
+
+            return response.Payload.SearchSuggestResponse;
+        }
+
         public async Task<ResponseWrapper> Search(string str)
         {
             HeaderSet("X-DFE-Device-Id", AndroidId);
@@ -123,7 +149,7 @@ namespace GooglePlayStoreApi
             HeaderSet("Authorization", $"GoogleLogin auth={Auth}");
             return await Get($"{API_ENDPOINT}/fdfe/search?c=3&q={Uri.EscapeUriString(str)}");
         }
-
+        
         public async Task<DetailsResponse> AppDetail(string appId)
         {
             HeaderSet("X-DFE-Device-Id", AndroidId);

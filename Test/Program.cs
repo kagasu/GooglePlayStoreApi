@@ -49,12 +49,28 @@ namespace Test
         static async Task AddReview(GooglePlayStoreClient client, string appId)
         {
             var review = await client.AddReview(appId, 5, "great app");
-            Console.WriteLine(JsonConvert.SerializeObject(review));
         }
 
         static async Task DeleteReview(GooglePlayStoreClient client, string appId)
         {
             await client.DeleteReview(appId);
+        }
+
+        static async Task SearchSuggest(GooglePlayStoreClient client, string str)
+        {
+            var suggests = await client.SearchSuggest(str);
+            foreach (var x in suggests.Entry)
+            {
+                switch (x.Type)
+                {
+                    case 2:
+                        Console.WriteLine(x.SuggestedQuery);
+                        break;
+                    case 3:
+                        Console.WriteLine(x.PackageNameContainer.PackageName);
+                        break;
+                }
+            }
         }
 
         static async Task Main(string[] args)
@@ -68,6 +84,7 @@ namespace Test
             var searchWord = "Gmail";
             var gmailAppId = "com.google.android.gm";
 
+            await SearchSuggest(client, searchWord);
             await GetSearchResult(client, searchWord);
             await GetAppDetail(client, gmailAppId);
             await DownloadApk(client, gmailAppId);
