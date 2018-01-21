@@ -46,6 +46,17 @@ namespace Test
             File.WriteAllBytes("Gmail.apk", bytes);
         }
 
+        static async Task AddReview(GooglePlayStoreClient client, string appId)
+        {
+            var review = await client.AddReview(appId, 5, "great app");
+            Console.WriteLine(JsonConvert.SerializeObject(review));
+        }
+
+        static async Task DeleteReview(GooglePlayStoreClient client, string appId)
+        {
+            await client.DeleteReview(appId);
+        }
+
         static async Task Main(string[] args)
         {
             var accountInfo = JObject.Parse(File.ReadAllText("accountInfo.json"));
@@ -60,6 +71,8 @@ namespace Test
             await GetSearchResult(client, searchWord);
             await GetAppDetail(client, gmailAppId);
             await DownloadApk(client, gmailAppId);
+            await AddReview(client, gmailAppId);
+            await DeleteReview(client, gmailAppId);
         }
     }
 }

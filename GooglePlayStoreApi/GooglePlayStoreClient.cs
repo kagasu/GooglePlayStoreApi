@@ -55,6 +55,13 @@ namespace GooglePlayStoreApi
             return ResponseWrapper.Parser.ParseFrom(bytes);
         }
 
+        private async Task<ResponseWrapper> Post(string url, HttpContent content)
+        {
+            var response = await client.PostAsync(url, content);
+            var bytes = await response.Content.ReadAsByteArrayAsync();
+            return ResponseWrapper.Parser.ParseFrom(bytes);
+        }
+
         public async Task<string> GetGoogleToken()
         {
             var content = new FormUrlEncodedContent(new Dictionary<string, string>
@@ -151,6 +158,33 @@ namespace GooglePlayStoreApi
             var apkDownloadUrl = appDelivery.AppDeliveryData.DownloadUrl;
 
             return await client.GetByteArrayAsync(apkDownloadUrl);
+        }
+
+        public async Task<ReviewResponse> AddReview(string appId, int rating, string comment)
+        {
+            HeaderSet("X-DFE-Device-Id", AndroidId);
+            HeaderSet("Accept-Language", "ja-JP");
+            HeaderSet("Authorization", $"GoogleLogin auth={Auth}");
+
+            var content = new ByteArrayContent(new byte[] { });
+            var response = await Post($"{API_ENDPOINT}/fdfe/addReview?doc={appId}&title=&content={comment}&rating={rating}&ipr=true&itpr=false", content);
+            
+            return response.Payload.ReviewResponse;
+        }
+
+        public async Task DeleteReview(string appId)
+        {
+            HeaderSet("X-DFE-Device-Id", AndroidId);
+            HeaderSet("Accept-Language", "ja-JP");
+            HeaderSet("Authorization", $"GoogleLogin auth={Auth}");
+
+            var content = new FormUrlEncodedContent(new Dictionary<string, string>
+            {
+                { "itpr", "false" },
+                { "doc", appId }
+            });
+
+            await Post($"{API_ENDPOINT}/fdfe/deleteReview", content);
         }
     }
 }
