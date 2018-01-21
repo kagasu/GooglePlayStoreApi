@@ -1,5 +1,6 @@
 ﻿using Google.Protobuf.Collections;
 using GooglePlayStore;
+using GooglePlayStoreApi.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -223,6 +224,15 @@ namespace GooglePlayStoreApi
             var response = await Get($"{API_ENDPOINT}/fdfe/topCharts?c=3");
             return response.PreFetch;
         }
+        
+        public async Task<ReviewResponse> Reviews(string packageName, int numberOfResults, ReviewSortType sortType, int offset = 0)
+        {
+            HeaderSet("X-DFE-Device-Id", AndroidId);
+            HeaderSet("Accept-Language", "ja-JP");
+            HeaderSet("Authorization", $"GoogleLogin auth={Auth}");
 
+            var response = await Get($"{API_ENDPOINT}/fdfe/rev?doc={packageName}&n={numberOfResults}&o={offset}&sort={(int)sortType}");
+            return response.Payload.ReviewResponse;
+        }
     }
 }

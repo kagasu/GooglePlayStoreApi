@@ -1,5 +1,6 @@
 ﻿using GooglePlayStore;
 using GooglePlayStoreApi;
+using GooglePlayStoreApi.Model;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -44,6 +45,15 @@ namespace Test
         {
             var bytes = await client.DownloadApk(packageName);
             File.WriteAllBytes("Gmail.apk", bytes);
+        }
+
+        static async Task Reviews(GooglePlayStoreClient client, string packageName)
+        {
+            var reviews = await client.Reviews(packageName, 20, ReviewSortType.HighRating);
+            foreach (var review in reviews.GetResponse.Review)
+            {
+                Console.WriteLine($"{review.Author2.Name},{review.Comment}");
+            }
         }
 
         static async Task AddReview(GooglePlayStoreClient client, string packageName)
@@ -106,6 +116,7 @@ namespace Test
             await GetSearchResult(client, searchWord);
             await GetAppDetail(client, gmailPackageName);
             await DownloadApk(client, gmailPackageName);
+            await Reviews(client, gmailPackageName);
             await AddReview(client, gmailPackageName);
             await DeleteReview(client, gmailPackageName);
             await TopCharts(client);
