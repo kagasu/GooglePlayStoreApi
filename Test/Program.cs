@@ -73,6 +73,24 @@ namespace Test
             }
         }
 
+        static async Task TopCharts(GooglePlayStoreClient client)
+        {
+            var topCharts = await client.TopCharts();
+            foreach (var topChart in topCharts.Select(x => x.Response.Payload.ListResponse.Doc[0].Child[0]))
+            {
+                var title = topChart.Title;
+                Console.WriteLine(title);
+
+                foreach (var appDetail in topChart.Child)
+                {
+                    var packageName = appDetail.Docid;
+                    var appName = appDetail.Title;
+                    
+                    Console.WriteLine($"{packageName},{appName}");
+                }
+            }
+        }
+
         static async Task Main(string[] args)
         {
             var accountInfo = JObject.Parse(File.ReadAllText("accountInfo.json"));
@@ -90,6 +108,7 @@ namespace Test
             await DownloadApk(client, gmailPackageName);
             await AddReview(client, gmailPackageName);
             await DeleteReview(client, gmailPackageName);
+            await TopCharts(client);
         }
     }
 }

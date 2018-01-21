@@ -1,4 +1,5 @@
-﻿using GooglePlayStore;
+﻿using Google.Protobuf.Collections;
+using GooglePlayStore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -212,5 +213,16 @@ namespace GooglePlayStoreApi
 
             await Post($"{API_ENDPOINT}/fdfe/deleteReview", content);
         }
+
+        public async Task<RepeatedField<PreFetch>> TopCharts()
+        {
+            HeaderSet("X-DFE-Device-Id", AndroidId);
+            HeaderSet("Accept-Language", "ja-JP");
+            HeaderSet("Authorization", $"GoogleLogin auth={Auth}");
+            
+            var response = await Get($"{API_ENDPOINT}/fdfe/topCharts?c=3");
+            return response.PreFetch;
+        }
+
     }
 }
