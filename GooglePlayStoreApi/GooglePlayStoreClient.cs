@@ -1,5 +1,4 @@
-﻿using Google.Protobuf;
-using GooglePlayStore;
+﻿using GooglePlayStore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -50,10 +49,10 @@ namespace GooglePlayStoreApi
             client.DefaultRequestHeaders.TryAddWithoutValidation(name, value);
         }
         
-        private async Task<T> Get<T>(string url, MessageParser<T> parser) where T : IMessage<T>
+        private async Task<ResponseWrapper> Get(string url)
         {
             var bytes = await client.GetByteArrayAsync(url);
-            return parser.ParseFrom(bytes);
+            return ResponseWrapper.Parser.ParseFrom(bytes);
         }
 
         public async Task<string> GetGoogleToken()
@@ -109,13 +108,33 @@ namespace GooglePlayStoreApi
             Auth = parameters["Auth"];
             return Auth;
         }
-
+        
         public async Task<ResponseWrapper> Search(string str)
         {
             HeaderSet("X-DFE-Device-Id", AndroidId);
             HeaderSet("Accept-Language", "ja-JP");
             HeaderSet("Authorization", $"GoogleLogin auth={Auth}");
-            return await Get($"{API_ENDPOINT}/fdfe/search?c=3&q={Uri.EscapeUriString(str)}", ResponseWrapper.Parser);
+            return await Get($"{API_ENDPOINT}/fdfe/search?c=3&q={Uri.EscapeUriString(str)}");
+        }
+
+        public async Task<DetailsResponse> AppDetail(string appId)
+        {
+            HeaderSet("X-DFE-Device-Id", AndroidId);
+            HeaderSet("Accept-Language", "ja-JP");
+            HeaderSet("Authorization", $"GoogleLogin auth={Auth}");
+            var response =  await Get($"{API_ENDPOINT}/fdfe/details?doc={Uri.EscapeUriString(appId)}");
+            
+            return response.Payload.DetailsResponse;
+        }
+
+        public async Task<DeliveryResponse> AppDelivery(string appId, int offerType, int versionCode)
+        {
+            HeaderSet("X-DFE-Device-Id", AndroidId);
+            HeaderSet("Accept-Language", "ja-JP");
+            HeaderSet("Authorization", $"GoogleLogin auth={Auth}");
+            var response = await Get($"{API_ENDPOINT}/fdfe/delivery?doc={Uri.EscapeUriString(appId)}&ot={offerType}&vc={versionCode}");
+
+            return response.Payload.DeliveryResponse;
         }
     }
 }
