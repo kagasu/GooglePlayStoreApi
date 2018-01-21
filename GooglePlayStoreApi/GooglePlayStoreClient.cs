@@ -137,7 +137,7 @@ namespace GooglePlayStoreApi
             return response.Payload.DeliveryResponse;
         }
 
-        public async Task<byte[]> Download(string appId)
+        public async Task<byte[]> DownloadApk(string appId)
         {
             HeaderSet("X-DFE-Device-Id", AndroidId);
             HeaderSet("Accept-Language", "ja-JP");

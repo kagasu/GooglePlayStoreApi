@@ -42,7 +42,7 @@ namespace Test
 
         static async Task DownloadApk(GooglePlayStoreClient client, string appId)
         {
-            var bytes = await client.Download(appId);
+            var bytes = await client.DownloadApk(appId);
             File.WriteAllBytes("Gmail.apk", bytes);
         }
 
