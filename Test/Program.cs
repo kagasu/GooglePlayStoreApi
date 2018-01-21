@@ -40,11 +40,10 @@ namespace Test
             return appDetail;
         }
 
-        static async Task DownloadApk(GooglePlayStoreClient client, string appId, int offerType, int versionCode)
+        static async Task DownloadApk(GooglePlayStoreClient client, string appId)
         {
-            var appDelivery = await client.AppDelivery(appId, offerType, versionCode);
-            var apkDownloadUrl = appDelivery.AppDeliveryData.DownloadUrl;
-            File.WriteAllBytes("Gmail.apk", await new HttpClient().GetByteArrayAsync(apkDownloadUrl));
+            var bytes = await client.Download(appId);
+            File.WriteAllBytes("Gmail.apk", bytes);
         }
 
         static async Task Main(string[] args)
@@ -59,11 +58,8 @@ namespace Test
             var gmailAppId = "com.google.android.gm";
 
             await GetSearchResult(client, searchWord);
-            var appDetail = await GetAppDetail(client, gmailAppId);
-            var versionCode = appDetail.DocV2.Details.AppDetails.VersionCode;
-            var offerType = appDetail.DocV2.Offer[0].OfferType;
-
-            await DownloadApk(client, gmailAppId, offerType, versionCode);
+            await GetAppDetail(client, gmailAppId);
+            await DownloadApk(client, gmailAppId);
         }
     }
 }

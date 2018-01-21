@@ -136,5 +136,21 @@ namespace GooglePlayStoreApi
 
             return response.Payload.DeliveryResponse;
         }
+
+        public async Task<byte[]> Download(string appId)
+        {
+            HeaderSet("X-DFE-Device-Id", AndroidId);
+            HeaderSet("Accept-Language", "ja-JP");
+            HeaderSet("Authorization", $"GoogleLogin auth={Auth}");
+
+            var appDetail = await AppDetail(appId);
+            var offerType = appDetail.DocV2.Offer[0].OfferType;
+            var versionCode = appDetail.DocV2.Details.AppDetails.VersionCode;
+
+            var appDelivery = await AppDelivery(appId, offerType, versionCode);
+            var apkDownloadUrl = appDelivery.AppDeliveryData.DownloadUrl;
+
+            return await client.GetByteArrayAsync(apkDownloadUrl);
+        }
     }
 }
