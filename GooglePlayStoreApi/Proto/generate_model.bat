@@ -1,0 +1,1 @@
+protoc --csharp_out=../Model GooglePlay.proto
