@@ -18,18 +18,18 @@ namespace Test
             var searchResult = await client.Search(str);
             foreach (var appDetail in searchResult.PreFetch[0].Response.Payload.ListResponse.Doc[0].Child.Select(x => x.Child[0]))
             {
-                var appId = appDetail.Docid;
+                var packageName = appDetail.Docid;
                 var appName = appDetail.Title;
 
-                Console.WriteLine($"{appId},{appName}");
+                Console.WriteLine($"{packageName},{appName}");
             }
 
             return searchResult;
         }
 
-        static async Task<DetailsResponse> GetAppDetail(GooglePlayStoreClient client, string appId)
+        static async Task<DetailsResponse> GetAppDetail(GooglePlayStoreClient client, string packageName)
         {
-            var appDetail = await client.AppDetail(appId);
+            var appDetail = await client.AppDetail(packageName);
             var appName = appDetail.DocV2.Title;
             var descriptionHtml = appDetail.DocV2.DescriptionHtml;
             var versionCode = appDetail.DocV2.Details.AppDetails.VersionCode;
@@ -40,20 +40,20 @@ namespace Test
             return appDetail;
         }
 
-        static async Task DownloadApk(GooglePlayStoreClient client, string appId)
+        static async Task DownloadApk(GooglePlayStoreClient client, string packageName)
         {
-            var bytes = await client.DownloadApk(appId);
+            var bytes = await client.DownloadApk(packageName);
             File.WriteAllBytes("Gmail.apk", bytes);
         }
 
-        static async Task AddReview(GooglePlayStoreClient client, string appId)
+        static async Task AddReview(GooglePlayStoreClient client, string packageName)
         {
-            var review = await client.AddReview(appId, 5, "great app");
+            var review = await client.AddReview(packageName, 5, "great app");
         }
 
-        static async Task DeleteReview(GooglePlayStoreClient client, string appId)
+        static async Task DeleteReview(GooglePlayStoreClient client, string packageName)
         {
-            await client.DeleteReview(appId);
+            await client.DeleteReview(packageName);
         }
 
         static async Task SearchSuggest(GooglePlayStoreClient client, string str)
@@ -82,14 +82,14 @@ namespace Test
             var auth = await client.GetGoogleAuth(token);
 
             var searchWord = "Gmail";
-            var gmailAppId = "com.google.android.gm";
+            var gmailPackageName = "com.google.android.gm";
 
             await SearchSuggest(client, searchWord);
             await GetSearchResult(client, searchWord);
-            await GetAppDetail(client, gmailAppId);
-            await DownloadApk(client, gmailAppId);
-            await AddReview(client, gmailAppId);
-            await DeleteReview(client, gmailAppId);
+            await GetAppDetail(client, gmailPackageName);
+            await DownloadApk(client, gmailPackageName);
+            await AddReview(client, gmailPackageName);
+            await DeleteReview(client, gmailPackageName);
         }
     }
 }

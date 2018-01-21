@@ -150,55 +150,55 @@ namespace GooglePlayStoreApi
             return await Get($"{API_ENDPOINT}/fdfe/search?c=3&q={Uri.EscapeUriString(str)}");
         }
         
-        public async Task<DetailsResponse> AppDetail(string appId)
+        public async Task<DetailsResponse> AppDetail(string packageName)
         {
             HeaderSet("X-DFE-Device-Id", AndroidId);
             HeaderSet("Accept-Language", "ja-JP");
             HeaderSet("Authorization", $"GoogleLogin auth={Auth}");
-            var response =  await Get($"{API_ENDPOINT}/fdfe/details?doc={Uri.EscapeUriString(appId)}");
+            var response =  await Get($"{API_ENDPOINT}/fdfe/details?doc={Uri.EscapeUriString(packageName)}");
             
             return response.Payload.DetailsResponse;
         }
 
-        public async Task<DeliveryResponse> AppDelivery(string appId, int offerType, int versionCode)
+        public async Task<DeliveryResponse> AppDelivery(string packageName, int offerType, int versionCode)
         {
             HeaderSet("X-DFE-Device-Id", AndroidId);
             HeaderSet("Accept-Language", "ja-JP");
             HeaderSet("Authorization", $"GoogleLogin auth={Auth}");
-            var response = await Get($"{API_ENDPOINT}/fdfe/delivery?doc={Uri.EscapeUriString(appId)}&ot={offerType}&vc={versionCode}");
+            var response = await Get($"{API_ENDPOINT}/fdfe/delivery?doc={Uri.EscapeUriString(packageName)}&ot={offerType}&vc={versionCode}");
 
             return response.Payload.DeliveryResponse;
         }
 
-        public async Task<byte[]> DownloadApk(string appId)
+        public async Task<byte[]> DownloadApk(string packageName)
         {
             HeaderSet("X-DFE-Device-Id", AndroidId);
             HeaderSet("Accept-Language", "ja-JP");
             HeaderSet("Authorization", $"GoogleLogin auth={Auth}");
 
-            var appDetail = await AppDetail(appId);
+            var appDetail = await AppDetail(packageName);
             var offerType = appDetail.DocV2.Offer[0].OfferType;
             var versionCode = appDetail.DocV2.Details.AppDetails.VersionCode;
 
-            var appDelivery = await AppDelivery(appId, offerType, versionCode);
+            var appDelivery = await AppDelivery(packageName, offerType, versionCode);
             var apkDownloadUrl = appDelivery.AppDeliveryData.DownloadUrl;
 
             return await client.GetByteArrayAsync(apkDownloadUrl);
         }
 
-        public async Task<ReviewResponse> AddReview(string appId, int rating, string comment)
+        public async Task<ReviewResponse> AddReview(string packageName, int rating, string comment)
         {
             HeaderSet("X-DFE-Device-Id", AndroidId);
             HeaderSet("Accept-Language", "ja-JP");
             HeaderSet("Authorization", $"GoogleLogin auth={Auth}");
 
             var content = new ByteArrayContent(new byte[] { });
-            var response = await Post($"{API_ENDPOINT}/fdfe/addReview?doc={appId}&title=&content={comment}&rating={rating}&ipr=true&itpr=false", content);
+            var response = await Post($"{API_ENDPOINT}/fdfe/addReview?doc={packageName}&title=&content={comment}&rating={rating}&ipr=true&itpr=false", content);
             
             return response.Payload.ReviewResponse;
         }
 
-        public async Task DeleteReview(string appId)
+        public async Task DeleteReview(string packageName)
         {
             HeaderSet("X-DFE-Device-Id", AndroidId);
             HeaderSet("Accept-Language", "ja-JP");
@@ -207,7 +207,7 @@ namespace GooglePlayStoreApi
             var content = new FormUrlEncodedContent(new Dictionary<string, string>
             {
                 { "itpr", "false" },
-                { "doc", appId }
+                { "doc", packageName }
             });
 
             await Post($"{API_ENDPOINT}/fdfe/deleteReview", content);
