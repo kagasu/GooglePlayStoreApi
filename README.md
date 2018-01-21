@@ -42,8 +42,14 @@ var offerType = appDetail.DocV2.Offer[0].OfferType;
 
 ### Download APK
 ```cs
-var gmailAppId = "com.google.android.gm";
-var appDelivery = await client.AppDelivery(gmailAppId, offerType, versionCode);
-var apkDownloadUrl = appDelivery.AppDeliveryData.DownloadUrl;
-File.WriteAllBytes("Gmail.apk", await new HttpClient().GetByteArrayAsync(apkDownloadUrl));
+var email = "abc@gmail.com";
+var password = "mypassword";
+var androidId = Guid.NewGuid().ToString("N").Substring(0, 16);
+
+var client = new GooglePlayStoreClient(email, password, androidId);
+var token = await client.GetGoogleToken();
+var auth = await client.GetGoogleAuth(token);
+
+var bytes = await client.DownloadApk("com.google.android.gm");
+File.WriteAllBytes("Gmail.apk", bytes);
 ```
