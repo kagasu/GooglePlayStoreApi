@@ -1,6 +1,6 @@
 <img src="https://i.imgur.com/I6Fcgir.png" width="96" height="96">
 
-# GooglePlayStoreApi[![NuGet](https://img.shields.io/nuget/v/GooglePlayStoreApi.svg?style=flat-square)](https://www.nuget.org/packages/GooglePlayStoreApi)
+# GooglePlayStoreApi[![NuGet](https://img.shields.io/nuget/v/GooglePlayStoreApi.svg?style=flat-square)](https://www.nuget.org/packages/GooglePlayStoreApi)[![Codacy grade](https://img.shields.io/codacy/grade/40c88adfb64d499dbb4e2414582f1b81.svg?style=flat-square)](https://www.codacy.com/app/kagasu/GooglePlayStoreApi/dashboard)
 
 # Install
 Install as [NuGet package](https://www.nuget.org/packages/GooglePlayStoreApi/):
