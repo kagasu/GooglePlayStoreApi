@@ -1,3 +1,5 @@
+<img src="https://i.imgur.com/I6Fcgir.png" width="96" height="96">
+
 # GooglePlayStoreApi
 
 # Usage
