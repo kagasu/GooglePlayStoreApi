@@ -1,6 +1,19 @@
 <img src="https://i.imgur.com/I6Fcgir.png" width="96" height="96">
 
-# GooglePlayStoreApi
+# GooglePlayStoreApi[![NuGet](https://img.shields.io/nuget/v/GooglePlayStoreApi.svg?style=flat-square)](https://www.nuget.org/packages/GooglePlayStoreApi)
+
+# Install
+Install as [NuGet package](https://www.nuget.org/packages/GooglePlayStoreApi/):
+
+```powershell
+Install-Package GooglePlayStoreApi
+```
+
+.NET CLI
+```shell
+dotnet add package GooglePlayStoreApi
+```
+
 
 # Usage
 ### Search
