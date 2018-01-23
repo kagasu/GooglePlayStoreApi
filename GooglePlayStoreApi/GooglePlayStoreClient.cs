@@ -15,6 +15,8 @@ namespace GooglePlayStoreApi
         private const string GOOGLE_PLAY_SERVICE_VERSION = "11951038";
         private const string API_ENDPOINT = "https://android.clients.google.com";
         private static HttpClient client;
+        
+        public CountryCode Country { get; set; } = CountryCode.Japan;
 
         public string AndroidId { get; set; }
         public string GoogleEmailAddress { get; set; }
@@ -69,10 +71,10 @@ namespace GooglePlayStoreApi
             var content = new FormUrlEncodedContent(new Dictionary<string, string>
             {
                 { "androidId", AndroidId },
-                { "lang", "ja_JP" },
+                { "lang", Country.GetCountryCode() },
                 { "google_play_services_version", GOOGLE_PLAY_SERVICE_VERSION },
                 { "sdk_version", "19" },
-                { "device_country", "jp" },
+                { "device_country", Country.GetCountry() },
                 { "callerSig", "38918a453d07199354f8b19af05ec6562ced5788" },
                 { "Email", GoogleEmailAddress },
                 { "get_accountid", "1" },
@@ -94,10 +96,10 @@ namespace GooglePlayStoreApi
             var content = new FormUrlEncodedContent(new Dictionary<string, string>
             {
                 { "androidId", AndroidId },
-                { "lang", "ja_JP" },
+                { "lang", Country.GetCountryCode() },
                 { "google_play_services_version", GOOGLE_PLAY_SERVICE_VERSION },
                 { "sdk_version", "19" },
-                { "device_country", "jp" },
+                { "device_country", Country.GetCountry() },
                 { "app", "com.android.vending" },
                 { "callerSig", "38918a453d07199354f8b19af05ec6562ced5788" },
                 { "client_sig", "38918a453d07199354f8b19af05ec6562ced5788" },
@@ -121,7 +123,7 @@ namespace GooglePlayStoreApi
         public async Task<SearchSuggestResponse> SearchSuggest(string str, bool suggestString = true, bool suggestApp = true)
         {
             HeaderSet("X-DFE-Device-Id", AndroidId);
-            HeaderSet("Accept-Language", "ja-JP");
+            HeaderSet("Accept-Language", Country.GetCountryCode());
             HeaderSet("Authorization", $"GoogleLogin auth={Auth}");
 
             var parameters = new List<KeyValuePair<string, string>>();
@@ -147,7 +149,7 @@ namespace GooglePlayStoreApi
         public async Task<ResponseWrapper> Search(string str)
         {
             HeaderSet("X-DFE-Device-Id", AndroidId);
-            HeaderSet("Accept-Language", "ja-JP");
+            HeaderSet("Accept-Language", Country.GetCountryCode());
             HeaderSet("Authorization", $"GoogleLogin auth={Auth}");
             return await Get($"{API_ENDPOINT}/fdfe/search?c=3&q={Uri.EscapeUriString(str)}");
         }
@@ -155,7 +157,7 @@ namespace GooglePlayStoreApi
         public async Task<DetailsResponse> AppDetail(string packageName)
         {
             HeaderSet("X-DFE-Device-Id", AndroidId);
-            HeaderSet("Accept-Language", "ja-JP");
+            HeaderSet("Accept-Language", Country.GetCountryCode());
             HeaderSet("Authorization", $"GoogleLogin auth={Auth}");
             var response =  await Get($"{API_ENDPOINT}/fdfe/details?doc={Uri.EscapeUriString(packageName)}");
             
@@ -165,7 +167,7 @@ namespace GooglePlayStoreApi
         public async Task<DeliveryResponse> AppDelivery(string packageName, int offerType, int versionCode)
         {
             HeaderSet("X-DFE-Device-Id", AndroidId);
-            HeaderSet("Accept-Language", "ja-JP");
+            HeaderSet("Accept-Language", Country.GetCountryCode());
             HeaderSet("Authorization", $"GoogleLogin auth={Auth}");
             var response = await Get($"{API_ENDPOINT}/fdfe/delivery?doc={Uri.EscapeUriString(packageName)}&ot={offerType}&vc={versionCode}");
 
@@ -175,7 +177,7 @@ namespace GooglePlayStoreApi
         public async Task<byte[]> DownloadApk(string packageName)
         {
             HeaderSet("X-DFE-Device-Id", AndroidId);
-            HeaderSet("Accept-Language", "ja-JP");
+            HeaderSet("Accept-Language", Country.GetCountryCode());
             HeaderSet("Authorization", $"GoogleLogin auth={Auth}");
 
             var appDetail = await AppDetail(packageName);
@@ -191,7 +193,7 @@ namespace GooglePlayStoreApi
         public async Task<ReviewResponse> AddReview(string packageName, int rating, string comment)
         {
             HeaderSet("X-DFE-Device-Id", AndroidId);
-            HeaderSet("Accept-Language", "ja-JP");
+            HeaderSet("Accept-Language", Country.GetCountryCode());
             HeaderSet("Authorization", $"GoogleLogin auth={Auth}");
 
             var content = new ByteArrayContent(new byte[] { });
@@ -203,7 +205,7 @@ namespace GooglePlayStoreApi
         public async Task DeleteReview(string packageName)
         {
             HeaderSet("X-DFE-Device-Id", AndroidId);
-            HeaderSet("Accept-Language", "ja-JP");
+            HeaderSet("Accept-Language", Country.GetCountryCode());
             HeaderSet("Authorization", $"GoogleLogin auth={Auth}");
 
             var content = new FormUrlEncodedContent(new Dictionary<string, string>
@@ -218,7 +220,7 @@ namespace GooglePlayStoreApi
         public async Task<RepeatedField<PreFetch>> TopCharts()
         {
             HeaderSet("X-DFE-Device-Id", AndroidId);
-            HeaderSet("Accept-Language", "ja-JP");
+            HeaderSet("Accept-Language", Country.GetCountryCode());
             HeaderSet("Authorization", $"GoogleLogin auth={Auth}");
             
             var response = await Get($"{API_ENDPOINT}/fdfe/topCharts?c=3");
@@ -228,7 +230,7 @@ namespace GooglePlayStoreApi
         public async Task<ReviewResponse> Reviews(string packageName, int numberOfResults, ReviewSortType sortType, int offset = 0)
         {
             HeaderSet("X-DFE-Device-Id", AndroidId);
-            HeaderSet("Accept-Language", "ja-JP");
+            HeaderSet("Accept-Language", Country.GetCountryCode());
             HeaderSet("Authorization", $"GoogleLogin auth={Auth}");
 
             var response = await Get($"{API_ENDPOINT}/fdfe/rev?doc={packageName}&n={numberOfResults}&o={offset}&sort={(int)sortType}");

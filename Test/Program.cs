@@ -106,6 +106,7 @@ namespace Test
             var accountInfo = JObject.Parse(File.ReadAllText("accountInfo.json"));
 
             var client = new GooglePlayStoreClient(accountInfo["email"].Value<string>(), accountInfo["password"].Value<string>(), accountInfo["android_id"].Value<string>(), new WebProxy("127.0.0.1", 8008));
+            client.Country = CountryCode.Japan;
             var token = await client.GetGoogleToken();
             var auth = await client.GetGoogleAuth(token);
 
