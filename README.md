@@ -58,7 +58,7 @@ var offerType = appDetail.DocV2.Offer[0].OfferType;
 ```cs
 var email = "abc@gmail.com";
 var password = "mypassword";
-var androidId = Guid.NewGuid().ToString("N").Substring(0, 16);
+var androidId = ""; // use your real GSF ID(Google Service Framework ID)
 
 var client = new GooglePlayStoreClient(email, password, androidId);
 var token = await client.GetGoogleToken();
