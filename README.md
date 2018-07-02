@@ -64,6 +64,7 @@ var client = new GooglePlayStoreClient(email, password, androidId);
 var token = await client.GetGoogleToken();
 var auth = await client.GetGoogleAuth(token);
 
+await client.Purchase("com.google.android.gm", offerType, versionCode);
 var bytes = await client.DownloadApk("com.google.android.gm");
 File.WriteAllBytes("Gmail.apk", bytes);
 ```
