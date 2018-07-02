@@ -236,5 +236,22 @@ namespace GooglePlayStoreApi
             var response = await Get($"{API_ENDPOINT}/fdfe/rev?doc={packageName}&n={numberOfResults}&o={offset}&sort={(int)sortType}");
             return response.Payload.ReviewResponse;
         }
+
+        public async Task<BuyResponse> Purchase(string packageName, int offerType, int versionCode)
+        {
+            HeaderSet("X-DFE-Device-Id", AndroidId);
+            HeaderSet("Accept-Language", Country.GetCountryCode());
+            HeaderSet("Authorization", $"GoogleLogin auth={Auth}");
+
+            var content = new FormUrlEncodedContent(new Dictionary<string, string>
+            {
+                { "doc", packageName },
+                { "ot", offerType.ToString() },
+                { "vc", versionCode.ToString() }
+            });
+
+            var response = await Post($"{API_ENDPOINT}/fdfe/purchase", content);
+            return response.Payload.BuyResponse;
+        }
     }
 }

@@ -41,8 +41,9 @@ namespace Test
             return appDetail;
         }
 
-        static async Task DownloadApk(GooglePlayStoreClient client, string packageName)
+        static async Task DownloadApk(GooglePlayStoreClient client, string packageName, int offerType, int versionCode)
         {
+            var res = await client.Purchase(packageName, offerType, versionCode);
             var bytes = await client.DownloadApk(packageName);
             File.WriteAllBytes("Gmail.apk", bytes);
         }
@@ -115,8 +116,11 @@ namespace Test
 
             await SearchSuggest(client, searchWord);
             await GetSearchResult(client, searchWord);
-            await GetAppDetail(client, gmailPackageName);
-            await DownloadApk(client, gmailPackageName);
+            var appDetail = await GetAppDetail(client, gmailPackageName);
+            var versionCode = appDetail.DocV2.Details.AppDetails.VersionCode;
+            var offerType = appDetail.DocV2.Offer[0].OfferType;
+
+            await DownloadApk(client, gmailPackageName, offerType, versionCode);
             await Reviews(client, gmailPackageName);
             await AddReview(client, gmailPackageName);
             await DeleteReview(client, gmailPackageName);
