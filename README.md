@@ -59,12 +59,17 @@ var offerType = appDetail.DocV2.Offer[0].OfferType;
 var email = "abc@gmail.com";
 var password = "mypassword";
 var androidId = ""; // use your real GSF ID(Google Service Framework ID)
+var gmailPackageName = "com.google.android.gm";
 
 var client = new GooglePlayStoreClient(email, password, androidId);
 var token = await client.GetGoogleToken();
 var auth = await client.GetGoogleAuth(token);
 
-await client.Purchase("com.google.android.gm", offerType, versionCode);
-var bytes = await client.DownloadApk("com.google.android.gm");
+var appDetail = await client.AppDetail(gmailPackageName);
+var offerType = appDetail.DocV2.Offer[0].OfferType;
+var versionCode = appDetail.DocV2.Details.AppDetails.VersionCode;
+
+await client.Purchase(gmailPackageName, offerType, versionCode);
+var bytes = await client.DownloadApk(gmailPackageName);
 File.WriteAllBytes("Gmail.apk", bytes);
 ```
