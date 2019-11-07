@@ -76,3 +76,8 @@ await client.Purchase(gmailPackageName, offerType, versionCode);
 var bytes = await client.DownloadApk(gmailPackageName);
 File.WriteAllBytes("Gmail.apk", bytes);
 ```
+# Related projects
+- https://github.com/microg/android_packages_apps_GmsCore
+- https://github.com/NoMore201/googleplay-api
+- https://github.com/MCMrARM/Google-Play-API
+- https://github.com/yeriomin/play-store-api
