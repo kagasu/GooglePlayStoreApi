@@ -12,7 +12,7 @@ namespace GooglePlayStoreApi
 {
     public class GooglePlayStoreClient
     {
-        private const string GOOGLE_PLAY_SERVICE_VERSION = "11951038";
+        private const string GOOGLE_PLAY_SERVICE_VERSION = "19530037";
         private const string API_ENDPOINT = "https://android.clients.google.com";
         private static HttpClient client;
         
@@ -21,7 +21,6 @@ namespace GooglePlayStoreApi
         public string AndroidId { get; set; }
         public string GoogleEmailAddress { get; set; }
         public string GooglePassword { get; set; }
-        public string Token { get; set; }
         public string Auth { get; set; }
 
         public GooglePlayStoreClient(string googleEmailAddress, string googlePassword, string androidId, IWebProxy proxy = null)
@@ -66,7 +65,7 @@ namespace GooglePlayStoreApi
             return ResponseWrapper.Parser.ParseFrom(bytes);
         }
 
-        public async Task<string> GetGoogleToken()
+        public async Task<string> GetGoogleToken(string token)
         {
             var content = new FormUrlEncodedContent(new Dictionary<string, string>
             {
@@ -75,56 +74,62 @@ namespace GooglePlayStoreApi
                 { "google_play_services_version", GOOGLE_PLAY_SERVICE_VERSION },
                 { "sdk_version", "19" },
                 { "device_country", Country.GetCountry() },
-                { "callerSig", "38918a453d07199354f8b19af05ec6562ced5788" },
-                { "Email", GoogleEmailAddress },
-                { "get_accountid", "1" },
-                { "add_account", "1" },
-                { "service", "ac2dm" },
-                { "callerPkg", "com.android.settings" },
-                { "EncryptedPasswd", PasswordCryptor.EncryptPassword(GoogleEmailAddress, GooglePassword) },
-            });
-
-            var response = await client.PostAsync($"{API_ENDPOINT}/auth", content);
-            var str = await response.Content.ReadAsStringAsync();
-            var parameters = str.Split('\n').ToDictionary(x => x.Split('=')[0], x => x.Split('=')[1]);
-            Token = parameters["Token"];
-            return Token;
-        }
-
-        public async Task<string> GetGoogleAuth(string token)
-        {
-            var content = new FormUrlEncodedContent(new Dictionary<string, string>
-            {
-                { "androidId", AndroidId },
-                { "lang", Country.GetCountryCode() },
-                { "google_play_services_version", GOOGLE_PLAY_SERVICE_VERSION },
-                { "sdk_version", "19" },
-                { "device_country", Country.GetCountry() },
-                { "app", "com.android.vending" },
                 { "callerSig", "38918a453d07199354f8b19af05ec6562ced5788" },
                 { "client_sig", "38918a453d07199354f8b19af05ec6562ced5788" },
                 { "token_request_options", "CAA4AQ==" },
                 { "Email", GoogleEmailAddress },
                 { "droidguardPeriodicUpdate", "1" },
-                { "service", "androidmarket" },
+                { "service", "ac2dm" },
                 { "system_partition", "1" },
                 { "check_email", "1" },
-                { "callerPkg", "com.google.android.gsf.login" },
+                { "callerPkg", "com.google.android.gms" },
+                { "get_accountid", "1" },
+                { "ACCESS_TOKEN", "1" },
+                { "add_account", "1" },
                 { "Token", token }
             });
 
             var response = await client.PostAsync($"{API_ENDPOINT}/auth", content);
             var str = await response.Content.ReadAsStringAsync();
             var parameters = str.Split('\n').ToDictionary(x => x.Split('=')[0], x => x.Split('=')[1]);
+            return parameters["Token"];
+        }
+
+        public async Task GetGoogleAuth(string token)
+        {
+            var content = new FormUrlEncodedContent(new Dictionary<string, string>
+            {
+                { "androidId", AndroidId },
+                { "lang", Country.GetCountryCode() },
+                { "google_play_services_version", GOOGLE_PLAY_SERVICE_VERSION },
+                { "sdk_version", "19" },
+                { "device_country", Country.GetCountry() },
+                { "callerSig", "38918a453d07199354f8b19af05ec6562ced5788" },
+                { "client_sig", "38918a453d07199354f8b19af05ec6562ced5788" },
+                { "token_request_options", "CAA4AVAB" },
+                { "Email", GoogleEmailAddress },
+                { "service", "oauth2:https://www.googleapis.com/auth/googleplay" },
+                { "system_partition", "1" },
+                { "check_email", "1" },
+                { "callerPkg", "com.google.android.gms" },
+                { "Token", token },
+                { "oauth2_foreground", "1" },
+                { "app", "com.android.vending" },
+                { "_opt_is_called_from_account_manager", "1" },
+                { "is_called_from_account_manager", "1" }
+            });
+
+            var response = await client.PostAsync($"{API_ENDPOINT}/auth", content);
+            var str = await response.Content.ReadAsStringAsync();
+            var parameters = str.Split('\n').ToDictionary(x => x.Split('=')[0], x => x.Split('=')[1]);
             Auth = parameters["Auth"];
-            return Auth;
         }
 
         public async Task<SearchSuggestResponse> SearchSuggest(string str, bool suggestString = true, bool suggestApp = true)
         {
             HeaderSet("X-DFE-Device-Id", AndroidId);
             HeaderSet("Accept-Language", Country.GetCountryCode());
-            HeaderSet("Authorization", $"GoogleLogin auth={Auth}");
+            HeaderSet("Authorization", $"OAuth {Auth}");
 
             var parameters = new List<KeyValuePair<string, string>>();
 
@@ -150,7 +155,7 @@ namespace GooglePlayStoreApi
         {
             HeaderSet("X-DFE-Device-Id", AndroidId);
             HeaderSet("Accept-Language", Country.GetCountryCode());
-            HeaderSet("Authorization", $"GoogleLogin auth={Auth}");
+            HeaderSet("Authorization", $"OAuth {Auth}");
             return await Get($"{API_ENDPOINT}/fdfe/search?c=3&q={Uri.EscapeUriString(str)}");
         }
         
@@ -158,7 +163,7 @@ namespace GooglePlayStoreApi
         {
             HeaderSet("X-DFE-Device-Id", AndroidId);
             HeaderSet("Accept-Language", Country.GetCountryCode());
-            HeaderSet("Authorization", $"GoogleLogin auth={Auth}");
+            HeaderSet("Authorization", $"OAuth {Auth}");
             var response =  await Get($"{API_ENDPOINT}/fdfe/details?doc={Uri.EscapeUriString(packageName)}");
             
             return response.Payload.DetailsResponse;
@@ -168,7 +173,7 @@ namespace GooglePlayStoreApi
         {
             HeaderSet("X-DFE-Device-Id", AndroidId);
             HeaderSet("Accept-Language", Country.GetCountryCode());
-            HeaderSet("Authorization", $"GoogleLogin auth={Auth}");
+            HeaderSet("Authorization", $"OAuth {Auth}");
             var response = await Get($"{API_ENDPOINT}/fdfe/delivery?doc={Uri.EscapeUriString(packageName)}&ot={offerType}&vc={versionCode}");
 
             return response.Payload.DeliveryResponse;
@@ -178,7 +183,7 @@ namespace GooglePlayStoreApi
         {
             HeaderSet("X-DFE-Device-Id", AndroidId);
             HeaderSet("Accept-Language", Country.GetCountryCode());
-            HeaderSet("Authorization", $"GoogleLogin auth={Auth}");
+            HeaderSet("Authorization", $"OAuth {Auth}");
 
             var appDetail = await AppDetail(packageName);
             var offerType = appDetail.DocV2.Offer[0].OfferType;
@@ -194,7 +199,7 @@ namespace GooglePlayStoreApi
         {
             HeaderSet("X-DFE-Device-Id", AndroidId);
             HeaderSet("Accept-Language", Country.GetCountryCode());
-            HeaderSet("Authorization", $"GoogleLogin auth={Auth}");
+            HeaderSet("Authorization", $"OAuth {Auth}");
 
             var content = new ByteArrayContent(new byte[] { });
             var response = await Post($"{API_ENDPOINT}/fdfe/addReview?doc={packageName}&title=&content={comment}&rating={rating}&ipr=true&itpr=false", content);
@@ -206,7 +211,7 @@ namespace GooglePlayStoreApi
         {
             HeaderSet("X-DFE-Device-Id", AndroidId);
             HeaderSet("Accept-Language", Country.GetCountryCode());
-            HeaderSet("Authorization", $"GoogleLogin auth={Auth}");
+            HeaderSet("Authorization", $"OAuth {Auth}");
 
             var content = new FormUrlEncodedContent(new Dictionary<string, string>
             {
@@ -221,7 +226,7 @@ namespace GooglePlayStoreApi
         {
             HeaderSet("X-DFE-Device-Id", AndroidId);
             HeaderSet("Accept-Language", Country.GetCountryCode());
-            HeaderSet("Authorization", $"GoogleLogin auth={Auth}");
+            HeaderSet("Authorization", $"OAuth {Auth}");
             
             var response = await Get($"{API_ENDPOINT}/fdfe/topCharts?c=3");
             return response.PreFetch;
@@ -231,7 +236,7 @@ namespace GooglePlayStoreApi
         {
             HeaderSet("X-DFE-Device-Id", AndroidId);
             HeaderSet("Accept-Language", Country.GetCountryCode());
-            HeaderSet("Authorization", $"GoogleLogin auth={Auth}");
+            HeaderSet("Authorization", $"OAuth {Auth}");
 
             var response = await Get($"{API_ENDPOINT}/fdfe/rev?doc={packageName}&n={numberOfResults}&o={offset}&sort={(int)sortType}");
             return response.Payload.ReviewResponse;
@@ -241,7 +246,7 @@ namespace GooglePlayStoreApi
         {
             HeaderSet("X-DFE-Device-Id", AndroidId);
             HeaderSet("Accept-Language", Country.GetCountryCode());
-            HeaderSet("Authorization", $"GoogleLogin auth={Auth}");
+            HeaderSet("Authorization", $"OAuth {Auth}");
 
             var content = new FormUrlEncodedContent(new Dictionary<string, string>
             {

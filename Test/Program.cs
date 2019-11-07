@@ -115,8 +115,14 @@ namespace Test
             {
                 Country = CountryCode.Japan
             };
-            var token = await client.GetGoogleToken();
-            var auth = await client.GetGoogleAuth(token);
+            // login
+            var token = "oauth2_4/...";
+            token = await client.GetGoogleToken(token);
+            await client.GetGoogleAuth(token);
+            Console.WriteLine($"auth token: {client.Auth}");
+
+            // use auth token
+            // client.Auth = "ya29....";
 
             var searchWord = "Gmail";
             var gmailPackageName = "com.google.android.gm";

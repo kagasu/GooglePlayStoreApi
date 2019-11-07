@@ -15,4 +15,10 @@
     <ProjectReference Include="..\GooglePlayStoreApi\GooglePlayStoreApi.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="accountInfo.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
