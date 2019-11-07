@@ -15,7 +15,7 @@ dotnet add package GooglePlayStoreApi
 
 
 # Usage
-Get `auth_token` from this [URL](https://accounts.google.com/embedded/setup/v2/android?source=com.android.settings&xoauth_display_name=Android%20Phone&canFrp=1&canSk=1&lang=us&langCountry=en_us&hl=en-US&cc=en&hide_status_bar=1&use_native_navigation=0)
+Get `auth_token` from this [URL](https://accounts.google.com/EmbeddedSetup)
 ![](https://i.imgur.com/80MLpoR.png)
 
 ### Search
