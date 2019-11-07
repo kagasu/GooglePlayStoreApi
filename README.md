@@ -15,15 +15,18 @@ dotnet add package GooglePlayStoreApi
 
 
 # Usage
+Get `auth_token` from this [URL](https://accounts.google.com/embedded/setup/v2/android?source=com.android.settings&xoauth_display_name=Android%20Phone&canFrp=1&canSk=1&lang=us&langCountry=en_us&hl=en-US&cc=en&hide_status_bar=1&use_native_navigation=0)
+![](https://i.imgur.com/80MLpoR.png)
+
 ### Search
 ```cs
 var email = "abc@gmail.com";
-var password = "mypassword";
-var androidId = Guid.NewGuid().ToString("N").Substring(0, 16);
+var androidId = ""; // use your real GSF ID(Google Service Framework ID)
+var token = "oauth2_4/...";
 
-var client = new GooglePlayStoreClient(email, password, androidId);
-var token = await client.GetGoogleToken();
-var auth = await client.GetGoogleAuth(token);
+var client = new GooglePlayStoreClient(email, androidId);
+token = await client.GetGoogleToken(token);
+await client.GetGoogleAuth(token);
 
 var searchResult = await client.Search("gmail");
 foreach (var appDetail in searchResult.PreFetch[0].Response.Payload.ListResponse.Doc[0].Child.Select(x => x.Child[0]))
@@ -38,12 +41,12 @@ foreach (var appDetail in searchResult.PreFetch[0].Response.Payload.ListResponse
 ### AppDetail
 ```cs
 var email = "abc@gmail.com";
-var password = "mypassword";
-var androidId = Guid.NewGuid().ToString("N").Substring(0, 16);
+var androidId = ""; // use your real GSF ID(Google Service Framework ID)
+var token = "oauth2_4/...";
 
-var client = new GooglePlayStoreClient(email, password, androidId);
-var token = await client.GetGoogleToken();
-var auth = await client.GetGoogleAuth(token);
+var client = new GooglePlayStoreClient(email, androidId);
+token = await client.GetGoogleToken(token);
+await client.GetGoogleAuth(token);
 
 var appDetail = await client.AppDetail("com.google.android.gm");
 var appName = appDetail.DocV2.Title;
@@ -57,13 +60,13 @@ var offerType = appDetail.DocV2.Offer[0].OfferType;
 ### Download APK
 ```cs
 var email = "abc@gmail.com";
-var password = "mypassword";
 var androidId = ""; // use your real GSF ID(Google Service Framework ID)
+var token = "oauth2_4/...";
 var gmailPackageName = "com.google.android.gm";
 
-var client = new GooglePlayStoreClient(email, password, androidId);
-var token = await client.GetGoogleToken();
-var auth = await client.GetGoogleAuth(token);
+var client = new GooglePlayStoreClient(email, androidId);
+token = await client.GetGoogleToken(token);
+await client.GetGoogleAuth(token);
 
 var appDetail = await client.AppDetail(gmailPackageName);
 var offerType = appDetail.DocV2.Offer[0].OfferType;
