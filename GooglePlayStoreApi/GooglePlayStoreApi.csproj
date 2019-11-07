@@ -1,22 +1,23 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <Description>Google Play Store API for .NET</Description>
     <Copyright>Copyright © kagasu, 2018</Copyright>
     <AssemblyTitle>GooglePlayStoreApi</AssemblyTitle>
-    <VersionPrefix>1.0.2</VersionPrefix>
+    <VersionPrefix>1.0.3</VersionPrefix>
     <Authors>kagasu</Authors>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <AssemblyName>GooglePlayStoreApi</AssemblyName>
     <PackageId>GooglePlayStoreApi</PackageId>
     <PackageTags>GooglePlay;PlayStore;Play;API</PackageTags>
-    <PackageIconUrl>https://camo.githubusercontent.com/56e18dd2327c44961f9727718843d6a63ae18c19/68747470733a2f2f692e696d6775722e636f6d2f493646636769722e706e67</PackageIconUrl>
+    <PackageIcon>icon.png</PackageIcon>
     <PackageProjectUrl>https://github.com/kagasu/GooglePlayStoreApi</PackageProjectUrl>
-    <PackageLicenseUrl>https://github.com/kagasu/GooglePlayStoreApi/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Google.Protobuf" Version="3.5.1" />
+    <None Include="images\icon.png" Pack="true" PackagePath=""/>
   </ItemGroup>
 
   <ItemGroup>
