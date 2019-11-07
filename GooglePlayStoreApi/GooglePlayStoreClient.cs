@@ -20,13 +20,11 @@ namespace GooglePlayStoreApi
 
         public string AndroidId { get; set; }
         public string GoogleEmailAddress { get; set; }
-        public string GooglePassword { get; set; }
         public string Auth { get; set; }
 
-        public GooglePlayStoreClient(string googleEmailAddress, string googlePassword, string androidId, IWebProxy proxy = null)
+        public GooglePlayStoreClient(string googleEmailAddress, string androidId, IWebProxy proxy = null)
         {
             GoogleEmailAddress = googleEmailAddress;
-            GooglePassword = googlePassword;
             AndroidId = androidId;
 
             var handler = new HttpClientHandler();

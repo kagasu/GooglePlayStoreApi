@@ -107,11 +107,10 @@ namespace Test
             var accountInfo = JObject.Parse(File.ReadAllText("accountInfo.json"));
 
             var email = accountInfo["email"].Value<string>();
-            var password = accountInfo["password"].Value<string>();
             var androidId = accountInfo["android_id"].Value<string>();
             var proxy = new WebProxy("127.0.0.1", 8008);
 
-            var client = new GooglePlayStoreClient(email, password, androidId, proxy)
+            var client = new GooglePlayStoreClient(email, androidId, proxy)
             {
                 Country = CountryCode.Japan
             };
