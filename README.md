@@ -81,3 +81,4 @@ File.WriteAllBytes("Gmail.apk", bytes);
 - https://github.com/NoMore201/googleplay-api
 - https://github.com/MCMrARM/Google-Play-API
 - https://github.com/yeriomin/play-store-api
+- https://github.com/dweinstein/node-google-play
