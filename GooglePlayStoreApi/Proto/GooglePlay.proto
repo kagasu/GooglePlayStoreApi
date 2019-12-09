@@ -207,6 +207,7 @@ message PurchaseStatusResponse {
   AndroidAppDeliveryData appDeliveryData = 8;
 }
 message DeliveryResponse {
+  int32 status = 1;
   AndroidAppDeliveryData appDeliveryData = 2;
 }
 
