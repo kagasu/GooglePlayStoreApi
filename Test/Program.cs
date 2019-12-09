@@ -117,11 +117,13 @@ namespace Test
             // login
             var token = "oauth2_4/...";
             token = await client.GetGoogleToken(token);
+            Console.WriteLine($"google token: {token}");
             await client.GetGoogleAuth(token);
             Console.WriteLine($"auth token: {client.Auth}");
 
-            // use auth token
-            // client.Auth = "ya29....";
+            // use google token
+            // var token = "aas_et/...";
+            // await client.GetGoogleAuth(token);
 
             var searchWord = "Gmail";
             var gmailPackageName = "com.google.android.gm";
