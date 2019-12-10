@@ -76,6 +76,23 @@ await client.Purchase(gmailPackageName, offerType, versionCode);
 var bytes = await client.DownloadApk(gmailPackageName);
 File.WriteAllBytes("Gmail.apk", bytes);
 ```
+
+### First time login
+```cs
+var token = "oauth2_4/...";
+token = await client.GetGoogleToken(token);
+// save token to "token.txt"
+File.WriteAllText("token.txt", token);
+await client.GetGoogleAuth(token);
+```
+
+### After the second time login
+```cs
+// load token from "token.txt"
+var token = File.ReadAllText("token.txt");
+await client.GetGoogleAuth(token);
+```
+
 # Related projects
 - https://github.com/microg/android_packages_apps_GmsCore
 - https://github.com/NoMore201/googleplay-api
