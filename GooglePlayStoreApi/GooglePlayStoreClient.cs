@@ -89,6 +89,11 @@ namespace GooglePlayStoreApi
 
             var response = await client.PostAsync($"{API_ENDPOINT}/auth", content);
             var str = await response.Content.ReadAsStringAsync();
+            if (response.StatusCode == HttpStatusCode.Forbidden)
+            {
+                throw new ForbiddenException(str);
+            }
+
             var parameters = str.Split('\n').ToDictionary(x => x.Split('=')[0], x => x.Split('=')[1]);
             return parameters["Token"];
         }
