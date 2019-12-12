@@ -94,6 +94,7 @@ await client.GetGoogleAuth(token);
 ```
 
 # Related projects
+- https://gitlab.com/AuroraOSS/AuroraStore
 - https://github.com/microg/android_packages_apps_GmsCore
 - https://github.com/NoMore201/googleplay-api
 - https://github.com/MCMrARM/Google-Play-API
