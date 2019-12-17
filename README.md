@@ -98,13 +98,13 @@ await client.GetGoogleAuth(token);
 - https://github.com/microg/android_packages_apps_GmsCore
 - https://github.com/NoMore201/googleplay-api
 - https://github.com/MCMrARM/Google-Play-API
-- https://github.com/yeriomin/play-store-api
 - https://github.com/dweinstein/node-google-play
 - https://github.com/Ksauder/googleplay-api
-- https://github.com/yeriomin/token-dispenser
 - https://github.com/onyxbits/raccoon4
 - https://github.com/kiwiz/gkeepapi
 - https://github.com/onyxbits/dummydroid
 - https://github.com/vemacs/GPSOAuthSharp
 - https://github.com/ClaudiuGeorgiu/PlaystoreDownloader
+- https://github.com/yeriomin/token-dispenser
+- https://github.com/yeriomin/play-store-api
 - https://github.com/whyorean/playstore-api-v2
