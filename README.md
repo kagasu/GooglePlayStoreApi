@@ -107,3 +107,4 @@ await client.GetGoogleAuth(token);
 - https://github.com/onyxbits/dummydroid
 - https://github.com/vemacs/GPSOAuthSharp
 - https://github.com/ClaudiuGeorgiu/PlaystoreDownloader
+- https://github.com/whyorean/playstore-api-v2
