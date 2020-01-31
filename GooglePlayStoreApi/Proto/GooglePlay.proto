@@ -33,7 +33,7 @@ message AndroidAppDeliveryData {
   EncryptionParams encryptionParams = 12;
   string gzippedApkDownloadUrl = 13;
   int64 gzippedApkDownloadSize = 14;
-  repeated SplitApkData splittedApkData = 15;
+  repeated SplitApkData splitApkData = 15;
 
 }
 message AndroidAppPatchData {
