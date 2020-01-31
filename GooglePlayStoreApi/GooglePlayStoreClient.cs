@@ -12,17 +12,18 @@ namespace GooglePlayStoreApi
 {
     public class GooglePlayStoreClient
     {
-        private const string GOOGLE_PLAY_SERVICE_VERSION = "19530037";
-        private const string API_ENDPOINT = "https://android.clients.google.com";
-        private static HttpClient client;
-        
+        private const string DefaultUserAgent = "Android-Finsky/8.5.39.W-all%20%5B0%5D%20%5BPR%5D%20178322352 (api=3,versionCode=80853900,sdk=22,device=bacon,hardware=bacon,product=aokp_bacon,platformVersionRelease=4.4.4,model=One,buildId=KTU84Q,isWideScreen=1,supportedAbis=armeabi-v7a;armeabi)";
+        private const string ApiEndpoint = "https://android.clients.google.com";
+
+        private static HttpClient client = default!;
+
         public CountryCode Country { get; set; } = CountryCode.Japan;
+        public string AndroidId { get; private set; } = default!;
+        public string GoogleEmailAddress { get; private set; } = default!;
+        public string Auth { get; private set; } = default!;
+        public string GooglePlayServiceVersion { get; set; } = "19530037";
 
-        public string AndroidId { get; set; }
-        public string GoogleEmailAddress { get; set; }
-        public string Auth { get; set; }
-
-        public GooglePlayStoreClient(string googleEmailAddress, string androidId, IWebProxy proxy = null)
+        public GooglePlayStoreClient(string googleEmailAddress, string androidId, string? userAgent = null, IWebProxy? proxy = null)
         {
             GoogleEmailAddress = googleEmailAddress;
             AndroidId = androidId;
@@ -36,7 +37,7 @@ namespace GooglePlayStoreApi
             }
 
             client = new HttpClient(handler);
-            HeaderSet("User-Agent", "Android-Finsky/8.5.39.W-all%20%5B0%5D%20%5BPR%5D%20178322352 (api=3,versionCode=80853900,sdk=19,device=bacon,hardware=bacon,product=aokp_bacon,platformVersionRelease=4.4.4,model=One,buildId=KTU84Q,isWideScreen=0,supportedAbis=armeabi-v7a;armeabi)");
+            HeaderSet("User-Agent", userAgent ?? DefaultUserAgent);
             client.DefaultRequestHeaders.TryAddWithoutValidation("device", androidId);
         }
 
@@ -69,7 +70,7 @@ namespace GooglePlayStoreApi
             {
                 { "androidId", AndroidId },
                 { "lang", Country.GetCountryCode() },
-                { "google_play_services_version", GOOGLE_PLAY_SERVICE_VERSION },
+                { "google_play_services_version", GooglePlayServiceVersion },
                 { "sdk_version", "19" },
                 { "device_country", Country.GetCountry() },
                 { "callerSig", "38918a453d07199354f8b19af05ec6562ced5788" },
@@ -87,7 +88,7 @@ namespace GooglePlayStoreApi
                 { "Token", token }
             });
 
-            var response = await client.PostAsync($"{API_ENDPOINT}/auth", content);
+            var response = await client.PostAsync($"{ApiEndpoint}/auth", content);
             var str = await response.Content.ReadAsStringAsync();
             if (response.StatusCode == HttpStatusCode.Forbidden)
             {
@@ -104,7 +105,7 @@ namespace GooglePlayStoreApi
             {
                 { "androidId", AndroidId },
                 { "lang", Country.GetCountryCode() },
-                { "google_play_services_version", GOOGLE_PLAY_SERVICE_VERSION },
+                { "google_play_services_version", GooglePlayServiceVersion },
                 { "sdk_version", "19" },
                 { "device_country", Country.GetCountry() },
                 { "callerSig", "38918a453d07199354f8b19af05ec6562ced5788" },
@@ -122,7 +123,7 @@ namespace GooglePlayStoreApi
                 { "is_called_from_account_manager", "1" }
             });
 
-            var response = await client.PostAsync($"{API_ENDPOINT}/auth", content);
+            var response = await client.PostAsync($"{ApiEndpoint}/auth", content);
             var str = await response.Content.ReadAsStringAsync();
             var parameters = str.Split('\n').ToDictionary(x => x.Split('=')[0], x => x.Split('=')[1]);
             Auth = parameters["Auth"];
@@ -149,7 +150,7 @@ namespace GooglePlayStoreApi
                 parameters.Add(new KeyValuePair<string, string>("sst", "3"));
             }
 
-            var response = await Get($"{API_ENDPOINT}/fdfe/searchSuggest?{string.Join("&", parameters.Select(x => $"{x.Key}={x.Value}"))}");
+            var response = await Get($"{ApiEndpoint}/fdfe/searchSuggest?{string.Join("&", parameters.Select(x => $"{x.Key}={x.Value}"))}");
 
             return response.Payload.SearchSuggestResponse;
         }
@@ -159,7 +160,7 @@ namespace GooglePlayStoreApi
             HeaderSet("X-DFE-Device-Id", AndroidId);
             HeaderSet("Accept-Language", Country.GetCountryCode());
             HeaderSet("Authorization", $"OAuth {Auth}");
-            return await Get($"{API_ENDPOINT}/fdfe/search?c=3&q={Uri.EscapeUriString(str)}");
+            return await Get($"{ApiEndpoint}/fdfe/search?c=3&q={Uri.EscapeUriString(str)}");
         }
         
         public async Task<DetailsResponse> AppDetail(string packageName)
@@ -167,7 +168,7 @@ namespace GooglePlayStoreApi
             HeaderSet("X-DFE-Device-Id", AndroidId);
             HeaderSet("Accept-Language", Country.GetCountryCode());
             HeaderSet("Authorization", $"OAuth {Auth}");
-            var response =  await Get($"{API_ENDPOINT}/fdfe/details?doc={Uri.EscapeUriString(packageName)}");
+            var response =  await Get($"{ApiEndpoint}/fdfe/details?doc={Uri.EscapeUriString(packageName)}");
             
             return response.Payload.DetailsResponse;
         }
@@ -177,7 +178,7 @@ namespace GooglePlayStoreApi
             HeaderSet("X-DFE-Device-Id", AndroidId);
             HeaderSet("Accept-Language", Country.GetCountryCode());
             HeaderSet("Authorization", $"OAuth {Auth}");
-            var response = await Get($"{API_ENDPOINT}/fdfe/delivery?doc={Uri.EscapeUriString(packageName)}&ot={offerType}&vc={versionCode}");
+            var response = await Get($"{ApiEndpoint}/fdfe/delivery?doc={Uri.EscapeUriString(packageName)}&ot={offerType}&vc={versionCode}");
 
             return response.Payload.DeliveryResponse;
         }
@@ -205,7 +206,7 @@ namespace GooglePlayStoreApi
             HeaderSet("Authorization", $"OAuth {Auth}");
 
             var content = new ByteArrayContent(new byte[] { });
-            var response = await Post($"{API_ENDPOINT}/fdfe/addReview?doc={packageName}&title=&content={comment}&rating={rating}&ipr=true&itpr=false", content);
+            var response = await Post($"{ApiEndpoint}/fdfe/addReview?doc={packageName}&title=&content={comment}&rating={rating}&ipr=true&itpr=false", content);
             
             return response.Payload.ReviewResponse;
         }
@@ -222,7 +223,7 @@ namespace GooglePlayStoreApi
                 { "doc", packageName }
             });
 
-            await Post($"{API_ENDPOINT}/fdfe/deleteReview", content);
+            await Post($"{ApiEndpoint}/fdfe/deleteReview", content);
         }
 
         public async Task<RepeatedField<PreFetch>> TopCharts()
@@ -231,7 +232,7 @@ namespace GooglePlayStoreApi
             HeaderSet("Accept-Language", Country.GetCountryCode());
             HeaderSet("Authorization", $"OAuth {Auth}");
             
-            var response = await Get($"{API_ENDPOINT}/fdfe/topCharts?c=3");
+            var response = await Get($"{ApiEndpoint}/fdfe/topCharts?c=3");
             return response.PreFetch;
         }
         
@@ -241,7 +242,7 @@ namespace GooglePlayStoreApi
             HeaderSet("Accept-Language", Country.GetCountryCode());
             HeaderSet("Authorization", $"OAuth {Auth}");
 
-            var response = await Get($"{API_ENDPOINT}/fdfe/rev?doc={packageName}&n={numberOfResults}&o={offset}&sort={(int)sortType}");
+            var response = await Get($"{ApiEndpoint}/fdfe/rev?doc={packageName}&n={numberOfResults}&o={offset}&sort={(int)sortType}");
             return response.Payload.ReviewResponse;
         }
 
@@ -258,7 +259,7 @@ namespace GooglePlayStoreApi
                 { "vc", versionCode.ToString() }
             });
 
-            var response = await Post($"{API_ENDPOINT}/fdfe/purchase", content);
+            var response = await Post($"{ApiEndpoint}/fdfe/purchase", content);
             return response.Payload.BuyResponse;
         }
     }

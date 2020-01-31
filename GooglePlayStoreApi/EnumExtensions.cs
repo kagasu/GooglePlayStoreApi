@@ -10,7 +10,7 @@ namespace GooglePlayStoreApi
         {
             var fieldInfo = value.GetType().GetField(value.ToString());
             var attributes = fieldInfo.GetCustomAttributes(typeof(TAttribute), false).Cast<TAttribute>();
-            return (!attributes?.Any() ?? false) ? null : attributes.First();
+            return attributes.FirstOrDefault();
         }
 
         [AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = false)]

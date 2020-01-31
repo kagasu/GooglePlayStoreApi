@@ -2,6 +2,23 @@ syntax = "proto3";
 package GooglePlayStore;
 
 message AndroidAppDeliveryData {
+  message SplitApkData {
+    message Unknown8 {
+      uint64 unknown1 = 1;
+      uint64 downloadSize = 2;
+      string downloadUrl = 3;
+    }
+
+    string fileName = 1;
+    int64 downloadSize = 2;
+    int64 gzippedApkDownloadSize = 3;
+    string unknown4 = 4;
+    string downloadUrl = 5;
+    string gzippedApkDownloadUrl = 6;
+    Unknown8 unknown8 = 8;
+    string unknown9 = 9;
+  }
+
   int64 downloadSize = 1;
   string signature = 2;
   string downloadUrl = 3;
@@ -14,6 +31,10 @@ message AndroidAppDeliveryData {
   bool immediateStartNeeded = 10;
   AndroidAppPatchData patchData = 11;
   EncryptionParams encryptionParams = 12;
+  string gzippedApkDownloadUrl = 13;
+  int64 gzippedApkDownloadSize = 14;
+  repeated SplitApkData splittedApkData = 15;
+
 }
 message AndroidAppPatchData {
   int32 baseVersionCode = 1;
