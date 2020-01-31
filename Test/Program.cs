@@ -1,4 +1,4 @@
-﻿using GooglePlayStore;
+using GooglePlayStore;
 using GooglePlayStoreApi;
 using GooglePlayStoreApi.Model;
 using Newtonsoft.Json;
@@ -110,7 +110,7 @@ namespace Test
             var androidId = accountInfo["android_id"].Value<string>();
             var proxy = new WebProxy("127.0.0.1", 8008);
 
-            var client = new GooglePlayStoreClient(email, androidId, proxy)
+            var client = new GooglePlayStoreClient(email, androidId, proxy: proxy)
             {
                 Country = CountryCode.Japan
             };
