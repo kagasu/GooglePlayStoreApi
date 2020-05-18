@@ -103,8 +103,13 @@ await client.GetGoogleAuth(token);
 - https://github.com/onyxbits/raccoon4
 - https://github.com/kiwiz/gkeepapi
 - https://github.com/onyxbits/dummydroid
-- https://github.com/vemacs/GPSOAuthSharp
 - https://github.com/ClaudiuGeorgiu/PlaystoreDownloader
 - https://github.com/yeriomin/token-dispenser
 - https://github.com/yeriomin/play-store-api
 - https://github.com/whyorean/playstore-api-v2
+- https://github.com/simon-weber/gpsoauth
+- https://github.com/vemacs/GPSOAuthSharp
+- https://github.com/bryanmytko/gpsoauth
+- https://github.com/svarzee/gpsoauth-java
+- https://github.com/dvirtz/gpsoauth-cpp
+- https://github.com/Iciclelz/gpsoauthclient
