@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <Description>Google Play Store API for .NET</Description>
@@ -6,7 +6,7 @@
     <AssemblyTitle>GooglePlayStoreApi</AssemblyTitle>
     <VersionPrefix>1.0.6</VersionPrefix>
     <Authors>kagasu</Authors>
-    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.1</TargetFrameworks>
     <AssemblyName>GooglePlayStoreApi</AssemblyName>
     <PackageId>GooglePlayStoreApi</PackageId>
     <PackageTags>GooglePlay;PlayStore;Play;API</PackageTags>
