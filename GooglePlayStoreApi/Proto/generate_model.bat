@@ -1,1 +1,1 @@
-protoc --csharp_out=../Model GooglePlay.proto
+protoc --experimental_allow_proto3_optional --csharp_out=../Model GooglePlay.proto

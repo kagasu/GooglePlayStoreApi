@@ -17,9 +17,9 @@ namespace Test
         static async Task<ResponseWrapper> GetSearchResult(GooglePlayStoreClient client, string str)
         {
             var searchResult = await client.Search(str);
-            foreach (var appDetail in searchResult.PreFetch[0].Response.Payload.ListResponse.Doc[0].Child.Select(x => x.Child[0]))
+            foreach (var appDetail in searchResult.PreFetch[0].Response.Payload.ListResponse.Item[0].SubItem.Select(x => x.SubItem[0]))
             {
-                var packageName = appDetail.Docid;
+                var packageName = appDetail.Id;
                 var appName = appDetail.Title;
 
                 Console.WriteLine($"{packageName},{appName}");
@@ -31,12 +31,12 @@ namespace Test
         static async Task<DetailsResponse> GetAppDetail(GooglePlayStoreClient client, string packageName)
         {
             var appDetail = await client.AppDetail(packageName);
-            var appName = appDetail.DocV2.Title;
-            var descriptionHtml = appDetail.DocV2.DescriptionHtml;
-            var versionCode = appDetail.DocV2.Details.AppDetails.VersionCode;
-            var versionString = appDetail.DocV2.Details.AppDetails.VersionString;
-            var permissions = appDetail.DocV2.Details.AppDetails.Permission;
-            var offerType = appDetail.DocV2.Offer[0].OfferType;
+            var appName = appDetail.Item.Title;
+            var descriptionHtml = appDetail.Item.DescriptionHtml;
+            var versionCode = appDetail.Item.Details.AppDetails.VersionCode;
+            var versionString = appDetail.Item.Details.AppDetails.VersionString;
+            var permissions = appDetail.Item.Details.AppDetails.Permission;
+            var offerType = appDetail.Item.Offer[0].OfferType;
 
             return appDetail;
         }
@@ -51,9 +51,9 @@ namespace Test
         static async Task Reviews(GooglePlayStoreClient client, string packageName)
         {
             var reviews = await client.Reviews(packageName, 20, ReviewSortType.HighRating);
-            foreach (var review in reviews.GetResponse.Review)
+            foreach (var review in reviews.UserReviewsResponse.Review)
             {
-                Console.WriteLine($"{review.Author2.Name},{review.Comment}");
+                Console.WriteLine($"{review.UserProfile.Name},{review.Comment}");
             }
         }
 
@@ -87,14 +87,14 @@ namespace Test
         static async Task TopCharts(GooglePlayStoreClient client)
         {
             var topCharts = await client.TopCharts();
-            foreach (var topChart in topCharts.Select(x => x.Response.Payload.ListResponse.Doc[0].Child[0]))
+            foreach (var topChart in topCharts.Select(x => x.Response.Payload.ListResponse.Item[0].SubItem[0]))
             {
                 var title = topChart.Title;
                 Console.WriteLine(title);
 
-                foreach (var appDetail in topChart.Child)
+                foreach (var appDetail in topChart.SubItem)
                 {
-                    var packageName = appDetail.Docid;
+                    var packageName = appDetail.Id;
                     var appName = appDetail.Title;
                     
                     Console.WriteLine($"{packageName},{appName}");
@@ -131,8 +131,8 @@ namespace Test
             await SearchSuggest(client, searchWord);
             await GetSearchResult(client, searchWord);
             var appDetail = await GetAppDetail(client, gmailPackageName);
-            var versionCode = appDetail.DocV2.Details.AppDetails.VersionCode;
-            var offerType = appDetail.DocV2.Offer[0].OfferType;
+            var versionCode = appDetail.Item.Details.AppDetails.VersionCode;
+            var offerType = appDetail.Item.Offer[0].OfferType;
 
             await DownloadApk(client, gmailPackageName, offerType, versionCode);
             await Reviews(client, gmailPackageName);
