@@ -4,7 +4,7 @@
     <Description>Google Play Store API for .NET</Description>
     <Copyright>Copyright © kagasu, 2018</Copyright>
     <AssemblyTitle>GooglePlayStoreApi</AssemblyTitle>
-    <VersionPrefix>1.0.6</VersionPrefix>
+    <VersionPrefix>1.0.7</VersionPrefix>
     <Authors>kagasu</Authors>
     <TargetFrameworks>netstandard2.1</TargetFrameworks>
     <AssemblyName>GooglePlayStoreApi</AssemblyName>
