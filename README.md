@@ -29,9 +29,9 @@ token = await client.GetGoogleToken(token);
 await client.GetGoogleAuth(token);
 
 var searchResult = await client.Search("gmail");
-foreach (var appDetail in searchResult.PreFetch[0].Response.Payload.ListResponse.Doc[0].Child.Select(x => x.Child[0]))
+foreach (var appDetail in searchResult.PreFetch[0].Response.Payload.ListResponse.Item[0].SubItem.Select(x => x.SubItem[0]))
 {
-  var appId = appDetail.Docid;
+  var appId = appDetail.Id;
   var appName = appDetail.Title;
 
   Console.WriteLine($"{appId},{appName}");
@@ -43,18 +43,19 @@ foreach (var appDetail in searchResult.PreFetch[0].Response.Payload.ListResponse
 var email = "abc@gmail.com";
 var androidId = ""; // use your real GSF ID(Google Service Framework ID)
 var token = "oauth2_4/...";
+var gmailPackageName = "com.google.android.gm";
 
 var client = new GooglePlayStoreClient(email, androidId);
 token = await client.GetGoogleToken(token);
 await client.GetGoogleAuth(token);
 
-var appDetail = await client.AppDetail("com.google.android.gm");
-var appName = appDetail.DocV2.Title;
-var descriptionHtml = appDetail.DocV2.DescriptionHtml;
-var versionCode = appDetail.DocV2.Details.AppDetails.VersionCode;
-var versionString = appDetail.DocV2.Details.AppDetails.VersionString;
-var permissions = appDetail.DocV2.Details.AppDetails.Permission;
-var offerType = appDetail.DocV2.Offer[0].OfferType;
+var appDetail = await client.AppDetail(gmailPackageName);
+var appName = appDetail.Item.Title;
+var descriptionHtml = appDetail.Item.DescriptionHtml;
+var versionCode = appDetail.Item.Details.AppDetails.VersionCode;
+var versionString = appDetail.Item.Details.AppDetails.VersionString;
+var permissions = appDetail.Item.Details.AppDetails.Permission;
+var offerType = appDetail.Item.Offer[0].OfferType;
 ```
 
 ### Download APK
@@ -68,9 +69,9 @@ var client = new GooglePlayStoreClient(email, androidId);
 token = await client.GetGoogleToken(token);
 await client.GetGoogleAuth(token);
 
-var appDetail = await client.AppDetail(gmailPackageName);
-var offerType = appDetail.DocV2.Offer[0].OfferType;
-var versionCode = appDetail.DocV2.Details.AppDetails.VersionCode;
+var appDetail = await GetAppDetail(client, gmailPackageName);
+var versionCode = appDetail.Item.Details.AppDetails.VersionCode;
+var offerType = appDetail.Item.Offer[0].OfferType;
 
 await client.Purchase(gmailPackageName, offerType, versionCode);
 var bytes = await client.DownloadApk(gmailPackageName);
